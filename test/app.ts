@@ -1,4 +1,4 @@
-import Tiper from "../src/index";
+import Tiper from "../lib/index";
 
 let options = {
 	text: `
