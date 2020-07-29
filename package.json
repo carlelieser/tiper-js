@@ -16,5 +16,6 @@
 	},
 	"dependencies": {
 		"set-interval-async": "^1.0.33"
-	}
+	},
+	"keywords": ["typing", "typer", "auto typing"]
 }
