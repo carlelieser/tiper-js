@@ -1,6 +1,7 @@
 <p>
 <img src="https://raw.githubusercontent.com/carlelieser/tiper-js/master/test/img/logo-black.svg" height="80">
 </p>
+
 [![npm version](https://badge.fury.io/js/tiper-js.svg)](https://badge.fury.io/js/tiper-js)
 
 A small library for creating typing animations.
