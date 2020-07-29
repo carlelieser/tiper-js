@@ -1,6 +1,6 @@
 {
 	"name": "tiper-js",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"description": "A library for creating awesome typing animations.",
 	"main": "index.js",
 	"scripts": {
@@ -16,6 +16,9 @@
 	},
 	"dependencies": {
 		"set-interval-async": "^1.0.33"
+	},
+	"repository": {
+		"url": "https://github.com/carlelieser/tiper-js"
 	},
 	"keywords": [
 		"typing",
