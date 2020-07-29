@@ -1,7 +1,12 @@
 <p>
 <img src="https://raw.githubusercontent.com/carlelieser/tiper-js/master/test/img/logo-black.svg" height="80">
 </p>
+[![npm version](https://badge.fury.io/js/tiper-js.svg)](https://badge.fury.io/js/tiper-js)
+
 A small library for creating typing animations.
+
+## Installation
+`npm i tiper-js`
 
 ## Usage
 Initialization is really simple. Just create a new instance of Tiper and pass in a DOM element. The options object is optional.
@@ -10,6 +15,8 @@ Initialization is really simple. Just create a new instance of Tiper and pass in
 let typer = new Tiper(document.querySelector('.typer-js-container'));
 typer.beginTyping();
 ```
+
+Checkout the test folder for a basic, viewable example.
 
 ### Options
 Tiper exposes a minimal, yet fun, set of options to play around with.
