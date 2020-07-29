@@ -5,7 +5,7 @@ const {
 	clearIntervalAsync,
 } = require("set-interval-async/dynamic");
 
-interface TiperSettings {
+interface TiperOptions {
 	text: string;
 	variation?: number;
 	wordsPerMinute?: number;
@@ -19,7 +19,7 @@ interface TiperSettings {
 
 class Tiper {
 	private element: Element;
-	private options: TiperSettings = {
+	private options: TiperOptions = {
 		text:
 			"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus tempus sagittis dapibus. Fusce lacinia dui tortor, at porttitor quam luctus ut. Aliquam gravida commodo eros ac dictum. Nam ac odio at sem interdum dictum eget sit amet lorem. Vivamus enim velit, condimentum sed neque non, dignissim viverra nulla. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Duis sodales, neque eget tincidunt efficitur, nisi orci vestibulum diam, eget fringilla dui dolor sed nisi. Pellentesque feugiat augue in felis interdum, non tempus dui volutpat. Sed pulvinar, massa non placerat scelerisque, nunc tellus posuere felis, a ultricies mi libero id velit. Mauris sed arcu dolor. Mauris varius a metus sit amet pulvinar. Proin rhoncus non quam in vulputate. ",
 		variation: 0.45,
@@ -38,7 +38,7 @@ class Tiper {
 	public glitchInterval: number;
 	public currentIndex = 0;
 
-	constructor(element: Element, options?: TiperSettings) {
+	constructor(element: Element, options?: TiperOptions) {
 		this.element = element;
 		if (options) this.options = { ...this.options, ...options };
 		this.options.text = this.options.text.trim();
@@ -69,7 +69,7 @@ class Tiper {
 
 	public handleTypingPause = async () => {
 		this.stopTyping();
-		await this.delay(this.options.pauseTimeout)
+		await this.delay(this.options.pauseTimeout);
 		this.beginTyping();
 	};
 
