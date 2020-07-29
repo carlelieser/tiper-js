@@ -1,0 +1,38 @@
+html,
+body {
+	margin: 0;
+	padding: 0;
+	background-color: #262c37;
+}
+
+p{
+	font-family: sans-serif;
+	opacity: 0.71;
+	color: #FFF;
+	text-align: center;
+}
+
+a{
+	text-decoration: none;
+	color: #16e97f;
+}
+
+.img-container{
+	margin: 4em auto;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.typer-js-container {
+	width: 100%;
+	height: 100%;
+	font-family: 'IBM Plex Mono', monospace;
+	font-size: 1.5em;
+	color: rgb(28, 250, 120);
+	padding: 1em 3em;
+	box-sizing: border-box;
+	white-space: pre-wrap;
+}
