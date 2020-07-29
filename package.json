@@ -1,6 +1,6 @@
 {
 	"name": "tiper-js",
-	"version": "1.0.3",
+	"version": "1.0.4",
 	"description": "A library for creating awesome typing animations.",
 	"main": "./lib/src/index.js",
 	"scripts": {
