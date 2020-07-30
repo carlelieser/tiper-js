@@ -13,6 +13,8 @@ let options = {
 	Nah just kidding, (sorry if your name is Mark). Anyway, hope you enjoy tinkering around with this!
 
 	`,
+	showCaret: true,
+	caretType: 'underscore'
 };
 let typer = new Tiper(document.querySelector(".typer-js-container"), options);
 typer.beginTyping();

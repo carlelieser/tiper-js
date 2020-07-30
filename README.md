@@ -23,12 +23,13 @@ Checkout the test folder for a basic, viewable example.
 ### Options
 Tiper exposes a minimal, yet fun, set of options to play around with.
 
-- `text: string` - The string of text to be typed.
-- `variation: number` (optional) - A number from 0 to 1. Used as a factor in determining the delay between typing the next character. Default is `0.45`.
-- `wordsPerMinute: number`: (optional) - A number used to determine typing speed. Default is `40`.
-- `pauseTimeout: number`: (optional) - The time in ms to pause on certain conditions. Only applies if `pauseOnSpace` or `pauseOnEndOfSentence` is true.
-- `pauseOnSpace: boolean`: (optional) - Whether or not to pause on spaces. Default is false.
-- `pauseOnEndOfSentence: boolean`: (optional) - Whether or not to pause at the end of sentences. Default is true.
-- `showCaret: boolean`: (optional) - Whether or not show caret. Default is false.
-- `glitch: boolean`: (optional) - Whether or not to show glitch effect intermittently.
-- `onFinishedTyping: Function`: (optional) - The callback to fire after the text has been typed.
+- `text: string` (required) - The string of text to be typed.
+- `hesitation: number` - A number from 0 to 1. Used as a factor in determining the delay between typing the next character. Default is `0.45`.
+- `wordsPerMinute: number`: - A number used to determine typing speed. Default is `40`.
+- `pauseTimeout: number`: - The time in ms to pause on certain conditions. Only applies if `pauseOnSpace` or `pauseOnEndOfSentence` is true.
+- `pauseOnSpace: boolean`: - Whether or not to pause on spaces. Default is false.
+- `pauseOnEndOfSentence: boolean`: - Whether or not to pause at the end of sentences. Default is true.
+- `showCaret: boolean`: - Whether or not show caret. Default is false.
+- `caretType: string`: - The type of caret to show if `showCaret` is true. Available options are 'normal' or 'underscore'. Default is 'normal'.
+- `glitch: boolean`: - Whether or not to show glitch effect intermittently.
+- `onFinishedTyping: Function`: - The callback to fire after the text has been typed.

@@ -7,12 +7,13 @@ const {
 
 interface TiperOptions {
 	text: string;
-	variation?: number;
+	hesitation?: number;
 	wordsPerMinute?: number;
 	pauseTimeout?: number;
 	pauseOnSpace?: boolean;
 	pauseOnEndOfSentence?: boolean;
 	showCaret?: boolean;
+	caretType?: string;
 	glitch?: boolean;
 	onFinishedTyping?: Function;
 }
@@ -22,21 +23,22 @@ class Tiper {
 	private options: TiperOptions = {
 		text:
 			"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus tempus sagittis dapibus. Fusce lacinia dui tortor, at porttitor quam luctus ut. Aliquam gravida commodo eros ac dictum. Nam ac odio at sem interdum dictum eget sit amet lorem. Vivamus enim velit, condimentum sed neque non, dignissim viverra nulla. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Duis sodales, neque eget tincidunt efficitur, nisi orci vestibulum diam, eget fringilla dui dolor sed nisi. Pellentesque feugiat augue in felis interdum, non tempus dui volutpat. Sed pulvinar, massa non placerat scelerisque, nunc tellus posuere felis, a ultricies mi libero id velit. Mauris sed arcu dolor. Mauris varius a metus sit amet pulvinar. Proin rhoncus non quam in vulputate. ",
-		variation: 0.45,
+		hesitation: 0.45,
 		wordsPerMinute: 40,
 		pauseTimeout: 525,
 		pauseOnSpace: false,
 		pauseOnEndOfSentence: true,
 		showCaret: false,
+		caretType: "normal",
 		glitch: false,
 		onFinishedTyping: () => {
 			console.log("Finished typing!");
 		},
 	};
 
-	public typingInterval: number;
-	public glitchInterval: number;
-	public currentIndex = 0;
+	private typingInterval: number;
+	private glitchInterval: number;
+	private currentIndex = 0;
 
 	constructor(element: Element, options?: TiperOptions) {
 		this.element = element;
@@ -44,22 +46,30 @@ class Tiper {
 		this.options.text = this.options.text.trim();
 	}
 
-	public getWords = () => {
+	private getWords = () => {
 		let words = this.options.text.match(/\w+/g);
 		return words;
 	};
 
-	public getTypingSpeed = () => {
+	private getTypingSpeed = () => {
 		let ms =
 			this.options.text.length / (this.options.wordsPerMinute * 4.7) + 10;
 		return ms;
 	};
 
-	public updateElementText = (char: string) => {
+	private getCaretCharacter = () => {
+		let char = this.options.caretType === "normal" ? "▮" : "_";
+		return char;
+	};
+
+	private updateElementText = (char: string) => {
 		let previousTextContent = this.element.textContent;
 		let text =
-			this.options.text.substring(0, previousTextContent.length) + char;
-		let caret = this.options.showCaret ? "▮" : "";
+			this.options.text.substring(
+				0,
+				previousTextContent.length - (this.options.showCaret ? 1 : 0)
+			) + char;
+		let caret = this.options.showCaret ? this.getCaretCharacter() : "";
 		this.element.textContent = text + caret;
 	};
 
@@ -67,28 +77,28 @@ class Tiper {
 		return clearIntervalAsync(this.typingInterval);
 	};
 
-	public handleTypingPause = async () => {
+	private handleTypingPause = async () => {
 		this.stopTyping();
 		await this.delay(this.options.pauseTimeout);
 		this.beginTyping();
 	};
 
-	public delay = (ms: number) => {
+	private delay = (ms: number) => {
 		return new Promise((resolve) => {
 			setTimeout(resolve, ms);
 		});
 	};
 
-	public applyVariation = async () => {
+	private applyVariation = async () => {
 		let timeout = Math.floor(
-			this.options.variation *
+			this.options.hesitation *
 				Math.random() *
 				this.getRandomArbitrary(100, 500)
 		);
 		await this.delay(timeout);
 	};
 
-	public insertNextChar = async () => {
+	private insertNextChar = async () => {
 		let currentChar = this.options.text.charAt(this.currentIndex);
 		let nextChar = this.options.text.charAt(this.currentIndex + 1);
 		let isSpace = currentChar.match(/\s/g);
@@ -101,7 +111,7 @@ class Tiper {
 
 		this.updateElementText(currentChar);
 
-		if (this.options.variation) await this.applyVariation();
+		if (this.options.hesitation) await this.applyVariation();
 
 		if (this.currentIndex >= this.options.text.length - 1) {
 			if (this.options.onFinishedTyping) this.options.onFinishedTyping();
@@ -113,11 +123,11 @@ class Tiper {
 		}
 	};
 
-	public getRandomArbitrary = (min, max) => {
+	private getRandomArbitrary = (min, max) => {
 		return Math.random() * (max - min) + min;
 	};
 
-	public applyGlitch = async () => {
+	private applyGlitch = async () => {
 		let text = this.element.textContent;
 		let randomCharPosition = this.getRandomArbitrary(1, text.length);
 		let beforeChar = text.substring(0, randomCharPosition);
@@ -125,7 +135,7 @@ class Tiper {
 		let glitch = `${beforeChar}▮ ${afterChar}`;
 		this.element.textContent = glitch;
 		await this.delay(
-			this.options.variation * this.getRandomArbitrary(100, 200)
+			this.options.hesitation * this.getRandomArbitrary(100, 200)
 		);
 		this.element.textContent = `${beforeChar}${afterChar}`;
 	};

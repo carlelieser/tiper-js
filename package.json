@@ -1,9 +1,10 @@
 {
 	"name": "tiper-js",
-	"version": "1.0.7",
+	"version": "1.0.8",
 	"description": "A library for creating awesome typing animations.",
 	"main": "./lib/index.js",
 	"scripts": {
+		"build": "tsc && webpack",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"author": "Carlos E. Santos",
