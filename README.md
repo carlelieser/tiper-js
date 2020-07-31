@@ -33,3 +33,7 @@ Tiper exposes a minimal, yet fun, set of options to play around with.
 - `caretType: string`: - The type of caret to show if `showCaret` is true. Available options are 'normal' or 'underscore'. Default is 'normal'.
 - `glitch: boolean`: - Whether or not to show glitch effect intermittently.
 - `onFinishedTyping: Function`: - The callback to fire after the text has been typed.
+
+### Methods
+- `typer.beginTyping()` - Begin typing at the current index.
+- `typer.stopTyping()` - Stop typing at the current index.
