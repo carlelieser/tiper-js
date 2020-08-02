@@ -6,6 +6,8 @@
 
 A small library for creating typing animations.
 
+_View a short video demonstration [here](https://github.com/carlelieser/tiper-js/blob/master/test/video/tiper-js-screen-recording.mov?raw=true)._
+
 ## Installation
 `npm i tiper-js`
 
