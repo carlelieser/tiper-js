@@ -13,8 +13,8 @@ A small library for creating typing animations.
 Initialization is really simple. Just create a new instance of Tiper and pass in a DOM element. The options object is optional.
 
 ```javascript
-let Tiper = require('tiper-js').default;
-let typer = new Tiper(document.querySelector('.typer-js-container'));
+const Tiper = require('tiper-js').default;
+const typer = new Tiper(document.querySelector('.typer-js-container'));
 typer.beginTyping();
 ```
 
