@@ -1,5 +1,3 @@
-declare var require: any;
-
 const {
 	setIntervalAsync,
 	clearIntervalAsync,
@@ -20,6 +18,7 @@ interface TiperOptions {
 
 class Tiper {
 	private container: Element;
+	private caretElement: Element;
 	private options: TiperOptions = {
 		text:
 			"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus tempus sagittis dapibus. Fusce lacinia dui tortor, at porttitor quam luctus ut. Aliquam gravida commodo eros ac dictum. Nam ac odio at sem interdum dictum eget sit amet lorem. Vivamus enim velit, condimentum sed neque non, dignissim viverra nulla. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Duis sodales, neque eget tincidunt efficitur, nisi orci vestibulum diam, eget fringilla dui dolor sed nisi. Pellentesque feugiat augue in felis interdum, non tempus dui volutpat. Sed pulvinar, massa non placerat scelerisque, nunc tellus posuere felis, a ultricies mi libero id velit. Mauris sed arcu dolor. Mauris varius a metus sit amet pulvinar. Proin rhoncus non quam in vulputate. ",
@@ -59,6 +58,8 @@ class Tiper {
 
 	constructor(container: Element, options?: TiperOptions) {
 		this.container = container;
+		if (this.container === null)
+			throw new Error("tiper-js: Invalid container element.");
 		if (options) this.options = { ...this.options, ...options };
 		this.options.text = this.trim(this.options.text);
 		this.setCurrentText(this.options.text);
@@ -85,6 +86,10 @@ class Tiper {
 		console.log("Setting current text to:", text);
 	};
 
+	private setCurrentTextElement = (currentTextElement: Element) => {
+		this.currentTextElement = currentTextElement;
+	};
+
 	private getCurrentText = () => {
 		return this.currentText;
 	};
@@ -102,7 +107,8 @@ class Tiper {
 
 	private sourceTextIsTargetLength = () => {
 		let caretLength = this.getCaretLength();
-		let textContentLength = this.container.textContent.length - caretLength;
+		let textContentLength =
+			this.currentTextElement.textContent.length - caretLength;
 		let currentTextLength = this.currentText.length - 1;
 
 		console.log(
@@ -122,16 +128,23 @@ class Tiper {
 		});
 	};
 
+	private setFinishedTyping = (finishedTyping: boolean) => {
+		this.typingListener.isFinishedTyping = finishedTyping;
+	};
+
+	private resetFinishedTyping = () => {
+		this.setFinishedTyping(false);
+	};
+
 	private updateElementText = (char: string) => {
-		let previousTextContent = this.container.textContent;
-		let caretLength = this.getCaretLength();
-		let lastIndex = previousTextContent.length - caretLength;
+		let previousTextContent = this.currentTextElement.textContent;
+		let lastIndex = previousTextContent.length;
 		let text = this.getTextByRange(0, lastIndex) + char;
-		let caret = this.options.showCaret ? this.getCaretCharacter() : "";
-		this.container.textContent = text + caret;
+		this.currentTextElement.textContent = text;
 	};
 
 	public stopTyping = () => {
+		this.activateCaret();
 		return clearIntervalAsync(this.typingInterval);
 	};
 
@@ -139,7 +152,12 @@ class Tiper {
 		let timeOut = ms !== undefined ? ms : this.options.pauseTimeout;
 		this.stopTyping();
 		await this.delay(timeOut);
-		this.beginTyping();
+		this.resumeTyping();
+	};
+
+	private resumeTyping = () => {
+		this.initializeTypingInterval();
+		this.deactivateCaret();
 	};
 
 	private delay = (ms: number) => {
@@ -192,7 +210,7 @@ class Tiper {
 
 		if (isFinished) {
 			if (this.options.onFinishedTyping) this.options.onFinishedTyping();
-			this.typingListener.isFinishedTyping = true;
+			this.setFinishedTyping(true);
 			await this.stopTyping();
 		} else {
 			this.currentIndex += 1;
@@ -200,17 +218,63 @@ class Tiper {
 		}
 	};
 
+	private activateCaret = () => {
+		if (this.caretElement) this.caretElement.classList.add("blinking");
+	};
+
+	private deactivateCaret = () => {
+		if (this.caretElement) this.caretElement.classList.remove("blinking");
+	};
+
 	private getRandomArbitrary = (min, max) => {
 		return Math.random() * (max - min) + min;
 	};
 
+	private createSpan = (className: string) => {
+		let el = document.createElement("span");
+		el.className = className;
+		return el;
+	};
+
+	private appendElementToContainer = (element: Element) => {
+		this.container.appendChild(element);
+	};
+
+	private initializeTextElement = () => {
+		let textElement = this.createSpan("tiper-js-text");
+		this.appendElementToContainer(textElement);
+		this.setCurrentTextElement(textElement);
+	};
+
+	private initializeCaret = () => {
+		if (this.caretElement) this.caretElement.remove();
+		let caret = this.createSpan("tiper-js-caret");
+		caret.innerText = this.getCaretCharacter();
+		this.appendElementToContainer(caret);
+		this.caretElement = caret;
+		this.activateCaret();
+	};
+
+	private initializeGlitchEffect = () => {
+		this.glitchInterval = setIntervalAsync(this.applyGlitch, 5000);
+		console.log(
+			`Beginning to type at ${this.options.wordsPerMinute} words per minute.`
+		);
+	};
+
+	private initializeTypingInterval = () => {
+		let ms = this.getTypingSpeed();
+		this.typingInterval = setIntervalAsync(this.insertCurrentChar, ms);
+		console.log("Typing interval is:", ms);
+	};
+
 	private setElementText = (text: string) => {
-		this.container.textContent = text;
+		this.currentTextElement.textContent = text;
 	};
 
 	private resetElementText = () => {
-		this.setElementText('');
-	}
+		this.container.innerHTML = "";
+	};
 
 	private applyGlitch = async () => {
 		let text = this.container.textContent;
@@ -226,33 +290,23 @@ class Tiper {
 	};
 
 	public beginTyping = async (text?: string, reset?: boolean) => {
-		let ms = this.getTypingSpeed();
 		let currentText = text ? text : this.options.text;
 		if (reset) this.resetElementText();
+		this.initializeTextElement();
 		this.setCurrentText(currentText);
-		this.typingListener.isFinishedTyping = false;
-		this.typingInterval = setIntervalAsync(this.insertCurrentChar, ms);
-		if (this.options.glitch)
-			this.glitchInterval = setIntervalAsync(this.applyGlitch, 5000);
-		console.log(
-			`Beginning to type at ${this.options.wordsPerMinute} words per minute.`
-		);
-		console.log("Typing interval is:", ms);
+		this.resetFinishedTyping();
+		this.initializeTypingInterval();
+		if (this.options.glitch) this.initializeGlitchEffect();
+		if (this.options.showCaret) this.initializeCaret();
+		this.deactivateCaret();
 
 		await this.observeTyping();
 	};
 
-	public line = (text: string) => {
-		return this.beginTyping(text);
+	public line = async (text: string) => {
+		await this.beginTyping(text);
+		return this;
 	};
 }
 
-declare global {
-	interface Window {
-		Tiper: any;
-	}
-}
-
-window.Tiper = Tiper;
-
-export default Tiper;
+export = Tiper;
