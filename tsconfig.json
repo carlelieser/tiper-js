@@ -1,7 +1,9 @@
 {
 	"compilerOptions": {
-		"target": "es5",
-		"module": "commonjs",
+		"target": "ES5",
+		"module": "CommonJs",
+		"allowSyntheticDefaultImports" : true,
+    	"esModuleInterop": true,
 		"lib": ["dom", "es6"],
 		"outDir": "lib",
 		"sourceMap": true

@@ -1,5 +1,4 @@
-import Tiper from "../lib/index";
-
+let Tiper = require('../lib/index');
 let options = {
 	text: `
 	This is like one of those scenes in a futuristic sci-fi movie where someone is communicating with the main character through an ominous computer screen. And the person is completely unaware of the context or meaning of the message, but then later finds out it was destined to be. 
@@ -14,7 +13,15 @@ let options = {
 
 	`,
 	showCaret: true,
-	caretType: 'underscore'
+	caretType: 'normal'
 };
-let typer = new Tiper(document.querySelector(".typer-js-container"), options);
-typer.beginTyping();
+
+let startTiper = async () => {
+	let tiper = new Tiper(
+		document.querySelector(".tiper-js-container"),
+		options
+	);
+	await tiper.beginTyping();
+}
+
+startTiper();
