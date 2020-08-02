@@ -13,9 +13,22 @@ A small library for creating typing animations.
 Initialization is really simple. Just create a new instance of Tiper and pass in a DOM element. The options object is optional.
 
 ```javascript
-let Tiper = require('tiper-js').default;
-let typer = new Tiper(document.querySelector('.typer-js-container'));
-typer.beginTyping();
+//ES6
+import Tiper from "tiper-js";
+
+//ES5
+let Tiper = require('tiper-js');
+
+let tiper = new Tiper(document.querySelector('.tiper-js-container'));
+
+tiper.beginTyping(); //Begins typing with default text and config.
+tiper.line('Hello, neighbor!') // Types "Hello, neighbor!". Also uses default config.
+```
+
+If you want to have the blinking cursor affect, link the css file in your html file like so:
+
+```html
+<link type="text/css" rel="stylesheet" href="./node_modules/tiper-js/lib/tiper-js.css">
 ```
 
 Checkout the test folder for a basic, viewable example.
@@ -35,5 +48,6 @@ Tiper exposes a minimal, yet fun, set of options to play around with.
 - `onFinishedTyping: Function`: - The callback to fire after the text has been typed.
 
 ### Methods
-- `typer.beginTyping()` - Begin typing at the current index.
-- `typer.stopTyping()` - Stop typing at the current index.
+- `typer.beginTyping(text: string, reset: boolean)` - Begin typing at the current index. Returns a Promise that resolves when all the text has been typed.
+- `typer.stopTyping()` - Stop typing at the current index. Returns a Promise that resolves when async interval is cleared.
+- `typer.line(text: string)` - Output a single line of text. Returns a Promise that resolves when the particular text is finished being displayed.
