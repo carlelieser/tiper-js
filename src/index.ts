@@ -1,9 +1,7 @@
-declare var require: any;
-
-const {
-	setIntervalAsync,
-	clearIntervalAsync,
-} = require("set-interval-async/dynamic");
+import { setIntervalAsync,
+	clearIntervalAsync, 
+	SetIntervalAsyncTimer} from 'set-interval-async/dynamic';
+import { getRandomArbitrary, delay } from './util';
 
 interface TiperOptions {
 	text: string;
@@ -36,8 +34,8 @@ class Tiper {
 		},
 	};
 
-	private typingInterval: number;
-	private glitchInterval: number;
+	private typingInterval: SetIntervalAsyncTimer;
+	private glitchInterval: SetIntervalAsyncTimer;
 	private currentIndex = 0;
 
 	constructor(element: Element, options?: TiperOptions) {
@@ -47,29 +45,25 @@ class Tiper {
 	}
 
 	private getWords = () => {
-		let words = this.options.text.match(/\w+/g);
-		return words;
+		return this.options.text.match(/\w+/g);
 	};
 
 	private getTypingSpeed = () => {
-		let ms =
-			this.options.text.length / (this.options.wordsPerMinute * 4.7) + 10;
-		return ms;
+		return this.options.text.length / (this.options.wordsPerMinute * 4.7) + 10;
 	};
 
 	private getCaretCharacter = () => {
-		let char = this.options.caretType === "normal" ? "▮" : "_";
-		return char;
+		return this.options.caretType === "normal" ? "▮" : "_";
 	};
 
 	private updateElementText = (char: string) => {
-		let previousTextContent = this.element.textContent;
-		let text =
+		const previousTextContent = this.element.textContent;
+		const text =
 			this.options.text.substring(
 				0,
 				previousTextContent.length - (this.options.showCaret ? 1 : 0)
 			) + char;
-		let caret = this.options.showCaret ? this.getCaretCharacter() : "";
+		const caret = this.options.showCaret ? this.getCaretCharacter() : "";
 		this.element.textContent = text + caret;
 	};
 
@@ -79,34 +73,28 @@ class Tiper {
 
 	private handleTypingPause = async () => {
 		this.stopTyping();
-		await this.delay(this.options.pauseTimeout);
+		await delay(this.options.pauseTimeout);
 		this.beginTyping();
 	};
 
-	private delay = (ms: number) => {
-		return new Promise((resolve) => {
-			setTimeout(resolve, ms);
-		});
-	};
-
 	private applyVariation = async () => {
-		let timeout = Math.floor(
+		const timeout = Math.floor(
 			this.options.hesitation *
 				Math.random() *
-				this.getRandomArbitrary(100, 500)
+				getRandomArbitrary(100, 500)
 		);
-		await this.delay(timeout);
+		await delay(timeout);
 	};
 
 	private insertNextChar = async () => {
-		let currentChar = this.options.text.charAt(this.currentIndex);
-		let nextChar = this.options.text.charAt(this.currentIndex + 1);
-		let isSpace = currentChar.match(/\s/g);
-		let isEndOfSentence =
-			(currentChar.match(/[\.\?\!]/g) && !nextChar.match(/[\.\?\!]/g)) ||
-			currentChar.match(/\\n/g);
-		let shouldPause =
-			(this.options.pauseOnSpace && isSpace) ||
+		const currentChar = this.options.text.charAt(this.currentIndex);
+		const nextChar = this.options.text.charAt(this.currentIndex + 1);
+		const isWhitespace = /\s/.test(currentChar);
+		const isEndOfSentence = 
+			(/[\.\?\!]/.test(currentChar) && !/[\.\?\!]/.test(nextChar)) ||
+			/\\n/.test(currentChar);
+		const shouldPause =
+			(this.options.pauseOnSpace && isWhitespace) ||
 			(this.options.pauseOnEndOfSentence && isEndOfSentence);
 
 		this.updateElementText(currentChar);
@@ -123,25 +111,21 @@ class Tiper {
 		}
 	};
 
-	private getRandomArbitrary = (min, max) => {
-		return Math.random() * (max - min) + min;
-	};
-
 	private applyGlitch = async () => {
-		let text = this.element.textContent;
-		let randomCharPosition = this.getRandomArbitrary(1, text.length);
-		let beforeChar = text.substring(0, randomCharPosition);
-		let afterChar = text.substring(randomCharPosition, text.length);
-		let glitch = `${beforeChar}▮ ${afterChar}`;
+		const text = this.element.textContent;
+		const randomCharPosition = getRandomArbitrary(1, text.length);
+		const beforeChar = text.substring(0, randomCharPosition);
+		const afterChar = text.substring(randomCharPosition, text.length);
+		const glitch = `${beforeChar}▮ ${afterChar}`;
 		this.element.textContent = glitch;
-		await this.delay(
-			this.options.hesitation * this.getRandomArbitrary(100, 200)
+		await delay(
+			this.options.hesitation * getRandomArbitrary(100, 200)
 		);
 		this.element.textContent = `${beforeChar}${afterChar}`;
 	};
 
 	public beginTyping = () => {
-		let ms = this.getTypingSpeed();
+		const ms = this.getTypingSpeed();
 		this.typingInterval = setIntervalAsync(this.insertNextChar, ms);
 		if (this.options.glitch)
 			this.glitchInterval = setIntervalAsync(this.applyGlitch, 5000);
