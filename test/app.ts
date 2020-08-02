@@ -14,7 +14,9 @@ let options = {
 
 	`,
 	showCaret: true,
-	caretType: 'underscore'
+	caretType: 'normal'
 };
 let typer = new Tiper(document.querySelector(".typer-js-container"), options);
-typer.beginTyping();
+typer.line('Cared season.').then(() => {
+	typer.line('Ooof.');
+});
