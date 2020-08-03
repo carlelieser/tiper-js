@@ -19,9 +19,9 @@ Initialization is really simple. Just create a new instance of Tiper and pass in
 import Tiper from "tiper-js";
 
 //ES5
-let Tiper = require('tiper-js');
+const Tiper = require('tiper-js');
 
-let tiper = new Tiper(document.querySelector('.tiper-js-container'));
+const tiper = new Tiper(document.querySelector('.tiper-js-container'));
 
 tiper.beginTyping(); //Begins typing with default text and config.
 tiper.line('Hello, neighbor!') // Types "Hello, neighbor!". Also uses default config.
