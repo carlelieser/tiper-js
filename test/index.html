@@ -3,16 +3,337 @@
 	<head>
 		<title>Tiper.js</title>
 		<meta charset="utf-8" />
-		 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet"> 
-		 <link type="text/css" rel="stylesheet" href="../lib/tiper-js.css" />
+		<link
+			href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&display=swap"
+			rel="stylesheet"
+		/>
+		<link
+			rel="stylesheet"
+			href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+			integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z"
+			crossorigin="anonymous"
+		/>
+
+		<link type="text/css" rel="stylesheet" href="../lib/tiper-js.css" />
 		<link type="text/css" rel="stylesheet" href="./main.css" />
 	</head>
 	<body>
-		<div class="img-container">
-			<img src="./img/logo-white.svg" height="80" />
+		<div class="container-fluid min-vh-100 position-relative p-4">
+			<div class="container">
+				<div class="container-fluid">
+					<div class="row justify-content-between">
+						<img src="./img/logo-black.svg" height="50" />
+						<div class="row">
+							<a href="https://github.com/carlelieser/tiper-js">
+								<img
+									src="https://image.flaticon.com/icons/svg/25/25231.svg"
+									height="24"
+								/>
+							</a>
+						</div>
+					</div>
+				</div>
+				<div class="row mt-4">
+					<div class="col-5">
+						<h1>Playground</h1>
+						<p class="lead">
+							Experiment with Tiper's configuration below!
+						</p>
+						<div class="mt-4">
+							<div>
+								<h4>Text</h4>
+								<div class="form-text text-muted">
+									The text to be typed.
+								</div>
+								<textarea
+									class="form-control mt-2"
+									data-tiper="text"
+								></textarea>
+							</div>
+							<div class="mt-3">
+								<h4>Hesitation</h4>
+								<div class="form-text text-muted">
+									A number from 0 to 1. Used as a factor in
+									determining the delay between typing the
+									next character.
+								</div>
+								<input
+									type="number"
+									value="0.45"
+									max="1"
+									step="0.01"
+									min="0"
+									class="form-control mt-2"
+									data-tiper="hesitation"
+								/>
+							</div>
+							<div class="mt-3">
+								<h4>Accuracy</h4>
+								<div class="form-text text-muted">
+									A number from 0 to 1. Used to determine how
+									often characters are misspelled.
+								</div>
+								<input
+									type="number"
+									value="0.95"
+									max="1"
+									step="0.01"
+									min="0"
+									class="form-control mt-2"
+									data-tiper="accuracy"
+								/>
+							</div>
+							<div class="mt-3">
+								<h4>Words per minute</h4>
+								<div class="form-text text-muted">
+									Determines typing speed.
+								</div>
+								<input
+									type="number"
+									value="40"
+									step="1"
+									min="0"
+									class="form-control mt-2"
+									data-tiper="wordsPerMinute"
+								/>
+							</div>
+							<div class="mt-3">
+								<h4>Pause timeout</h4>
+								<div class="form-text text-muted">
+									The time (in milliseconds) to pause before
+									continuing to type the next character. Only
+									applies when <code>pauseOnSpace</code> or
+									<code>pauseOnEndOfSentence</code> is true.
+								</div>
+								<input
+									type="number"
+									value="525"
+									step="1"
+									min="0"
+									class="form-control mt-2"
+									data-tiper="pauseTimeout"
+								/>
+							</div>
+							<div class="form-check mt-2">
+								<label class="form-check-label">
+									<input
+										type="checkbox"
+										value="pauseOnSpace"
+										class="form-check-input"
+										data-tiper="pauseOnSpace"
+									/>
+									Pause on spaces
+								</label>
+							</div>
+							<div class="form-check mt-2">
+								<label class="form-check-label">
+									<input
+										type="checkbox"
+										value="pauseOnEndOfSentence"
+										checked
+										class="form-check-input"
+										data-tiper="pauseOnEndOfSentence"
+									/>
+									Pause on end of sentences
+								</label>
+							</div>
+							<div class="mt-3">
+								<h4>Caret</h4>
+								<div class="form-text text-muted">
+									Manage caret options.
+								</div>
+								<div class="mt-2">
+									<div class="form-check">
+										<label class="form-check-label">
+											<input
+												type="checkbox"
+												value="showCaret"
+												class="form-check-input"
+												data-tiper="showCaret"
+											/>
+											Show caret
+										</label>
+									</div>
+									<h6 class="mt-2">Caret style</h6>
+									<select
+										class="custom-select"
+										data-tiper="caretType"
+									>
+										<option value="normal" selected
+											>Normal</option
+										>
+										<option value="underscore"
+											>Underscore</option
+										>
+									</select>
+								</div>
+							</div>
+						</div>
+						<h4 class="mt-3">Glitching</h4>
+						<div class="form-text text-muted">
+							Applies "glitch" effect at random intervals.
+						</div>
+						<div class="form-check mt-2">
+							<label class="form-check-label">
+								<input
+									type="checkbox"
+									value="glitch"
+									class="form-check-input"
+									data-tiper="glitch"
+								/>
+								Glitch
+							</label>
+						</div>
+
+						<button
+							type="button"
+							class="w-100 btn btn-primary action-btn rounded-pill d-flex align-items-center justify-content-center mt-4 p-3 pl-4 pr-4"
+						></button>
+					</div>
+					<div class="col-1"></div>
+					<div class="col-6">
+						<div
+							class="status-container ml-0 mr-0 row align-items-center justify-content-between bg-primary shadow-sm"
+						>
+							<div>
+								<span class="text-white font-weight-bold"
+									>Status</span
+								>
+								<span class="status text-light ml-2"></span>
+							</div>
+							<div class="dropdown">
+								<div
+									class="btn btn-light d-flex align-items-center justify-content-center"
+									data-toggle="dropdown"
+								>
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										width="20"
+										height="20"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="2"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										class="feather feather-more-vertical"
+									>
+										<circle cx="12" cy="12" r="1" />
+										<circle cx="12" cy="5" r="1" />
+										<circle cx="12" cy="19" r="1" />
+									</svg>
+								</div>
+								<div class="dropdown-menu">
+									<div
+										class="dropdown-item action-btn d-flex align-items-center"
+									></div>
+									<div
+										class="dropdown-item restart-btn d-flex align-items-center"
+									>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											width="20"
+											height="20"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="2"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											class="feather feather-refresh-ccw"
+										>
+											<polyline
+												points="1 4 1 10 7 10"
+											></polyline>
+											<polyline
+												points="23 20 23 14 17 14"
+											></polyline>
+											<path
+												d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"
+											></path>
+										</svg>
+										<span class="ml-2">Restart</span>
+									</div>
+									<div
+										class="clear-btn dropdown-item d-flex align-items-center"
+									>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											width="20"
+											height="20"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="2"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											class="feather feather-rewind"
+										>
+											<polygon
+												points="11 19 2 12 11 5 11 19"
+											/>
+											<polygon
+												points="22 19 13 12 22 5 22 19"
+											/>
+										</svg>
+										<span class="ml-2">Clear</span>
+									</div>
+									<div
+										class="copy-code-btn dropdown-item d-flex align-items-center"
+									>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											width="20"
+											height="20"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="2"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											class="feather feather-code"
+										>
+											<polyline
+												points="16 18 22 12 16 6"
+											/>
+											<polyline points="8 6 2 12 8 18" />
+										</svg>
+										<span class="ml-2">Copy code</span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="empty-state-container">
+							<img src="./img/empty-state.svg"/>
+							<h3 class="text-white font-weight-bold">There's not much here...</p>
+							<p class="text-light small">Change Tiper's configuration and run it to see the results!</p>
+						</div>
+						<div
+							class="tiper-js-container shadow-lg h-100 mt-4"
+						></div>
+					</div>
+				</div>
+			</div>
 		</div>
-		<p><i>Yes, I had to misspell "typer" because I realized someone already came up with this <a href="https://www.npmjs.com/package/typer-js">idea</a> (and did a much better job).</i></p>
-		<div class="tiper-js-container"></div>
+		<div class="footer container-fluid">
+			<div
+				class="container p-4 d-flex align-items-center justify-content-center"
+			>
+				<span class="lead">
+					Made with ❤️️ by
+					<a href="https://github.com/carlelieser">Carlos Santos</a>.
+				</span>
+			</div>
+		</div>
+		<div class="toast m-4" style="position: absolute; top: 0; right: 0; width: 200px;">
+			<div class="toast-header">
+				<strong class="mr-auto">Tiper</strong>
+				<small>Now</small>
+			</div>
+			<div class="toast-body">
+				Code successfully copied to clipboard.
+			</div>
+		</div>
 		<script type="text/javascript" src="./dist/bundle.js"></script>
 	</body>
 </html>

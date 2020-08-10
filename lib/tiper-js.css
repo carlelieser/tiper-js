@@ -1,9 +1,13 @@
-.tiper-js-caret.blinking{
-	animation: blinking 1s infinite steps(2, start); 
+.tiper-js-container{
+	white-space: pre-wrap;
 }
 
-@keyframes blinking{
-	to{
+.tiper-js-caret.blinking {
+	animation: blinking 1s infinite steps(2, start);
+}
+
+@keyframes blinking {
+	to {
 		visibility: hidden;
 	}
 }

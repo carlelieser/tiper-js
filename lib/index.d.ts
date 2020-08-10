@@ -1,6 +1,7 @@
-interface TiperOptions {
-    text: string;
+export interface tiperOptions {
+    text?: string;
     hesitation?: number;
+    accuracy?: number;
     wordsPerMinute?: number;
     pauseTimeout?: number;
     pauseOnSpace?: boolean;
@@ -10,6 +11,13 @@ interface TiperOptions {
     glitch?: boolean;
     onFinishedTyping?: Function;
 }
+export interface repeatConfig {
+    values?: Array<string>;
+    action?: string;
+    getValue?: Function;
+    repeatAmount: number;
+    delay: number;
+}
 declare class Tiper {
     private container;
     private caretElement;
@@ -17,15 +25,34 @@ declare class Tiper {
     private typingInterval;
     private glitchInterval;
     private currentTextElement;
+    private currentTypos;
     private currentText;
     private currentIndex;
+    private charsToDelete;
+    private repeatAmount;
+    private repeatAction;
+    private repeatValue;
+    private mandatoryStop;
     private typingListener;
-    constructor(container: Element, options?: TiperOptions);
-    private trim;
+    constructor(container: Element, options?: tiperOptions);
+    private throwError;
+    private setRepeatSettings;
+    private setMandatoryStop;
+    private setCharsToDelete;
+    private setRepeatValue;
+    private getWords;
+    private getAverageWordLength;
     private getTypingSpeed;
     private getCaretCharacter;
+    private generateArrayWithSameValues;
+    private generateBinaryTypoMap;
+    private getClosestKey;
+    private generateTypos;
+    private setCurrentTypos;
+    private updateTypos;
     private setCurrentText;
     private setCurrentTextElement;
+    private setCurrentIndex;
     private getCurrentText;
     private getTextByRange;
     private getCaretLength;
@@ -34,28 +61,46 @@ declare class Tiper {
     private setFinishedTyping;
     private resetFinishedTyping;
     private updateElementText;
-    stopTyping: () => any;
-    private pauseTyping;
-    private resumeTyping;
+    stopTyping: (mandatory?: boolean) => Promise<void>;
+    pause: (ms?: number, mandatoryStop?: boolean) => Promise<void>;
+    pauseTyping: () => Promise<void>;
+    resume: (reverse?: boolean, reset?: boolean, mandatoryStop?: boolean, setMandatoryStop?: boolean) => void;
+    resumeTyping: () => void;
     private delay;
     private applyVariation;
     private getCharAt;
     private isEndOfSentence;
     private getShouldPause;
+    private fixTypoAtIndex;
+    private applyAndCorrectTypo;
     private insertCurrentChar;
+    private setCaretElement;
     private activateCaret;
     private deactivateCaret;
-    private getRandomArbitrary;
     private createSpan;
-    private appendElementToContainer;
+    private removeAllElements;
+    private insertElementInContainer;
     private initializeTextElement;
     private initializeCaret;
     private initializeGlitchEffect;
     private initializeTypingInterval;
     private setElementText;
+    getElementText: () => any;
     private resetElementText;
+    private getRandomGlitchChar;
+    private generateGlitchText;
     private applyGlitch;
     beginTyping: (text?: string, reset?: boolean) => Promise<void>;
-    line: (text: string) => Promise<this>;
+    line: (text: string, reset?: boolean) => Promise<void>;
+    back: (chars?: number) => Promise<void>;
+    repeat: (repeatAmount: number | string, repeatAction: Function) => Promise<void>;
+    private continueRepeat;
+    private generateRepeatAction;
+    easyRepeat: (config: repeatConfig) => Promise<void>;
+    targetRepeat: (config: repeatConfig) => Promise<void>;
+    setAccuracy: (accuracy: number) => void;
+    destroy: () => Promise<boolean>;
+    isFinished: () => boolean;
+    clearText: () => void;
 }
-export = Tiper;
+export default Tiper;

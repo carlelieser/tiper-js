@@ -2,28 +2,20 @@ html,
 body {
 	margin: 0;
 	padding: 0;
-	background-color: #262c37;
 }
 
-p{
-	font-family: sans-serif;
-	opacity: 0.71;
-	color: #FFF;
-	text-align: center;
+*:not(input):not(textarea){
+	user-select: none;
+	cursor: default;
 }
 
-a{
-	text-decoration: none;
-	color: #16e97f;
+body{
+	padding: 4em;
 }
 
-.img-container{
-	margin: 4em auto;
-    position: relative;
-    z-index: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+textarea{
+	resize: none;
+	height: 200px !important;
 }
 
 .tiper-js-container {
@@ -32,7 +24,39 @@ a{
 	font-family: 'IBM Plex Mono', monospace;
 	font-size: 1.5em;
 	color: rgb(28, 250, 120);
-	padding: 1em 3em;
+	padding: 2em;
 	box-sizing: border-box;
-	white-space: pre-wrap;
+	background-color: #2d313c;
+	border-radius: 1em;
+	transition: height .25s ease-in-out;
+	max-height: calc(100% - 100px);
+}
+
+.empty-state-container{
+	position: absolute;
+	padding: 3em;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	text-align: center;
+	display: none;
+}
+
+.status-container{
+	padding: 2em;
+	border-radius: 1em;
+}
+
+.footer{
+	margin-top: 3em;
+}
+
+.btn, .btn *{
+	cursor: pointer !important;
+}
+
+.dropdown-item{
+	padding-top: 0.5em !important;
+	padding-bottom: 0.5em !important;
 }
