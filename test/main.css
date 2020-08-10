@@ -32,6 +32,17 @@ textarea{
 	max-height: calc(100% - 100px);
 }
 
+.empty-state-container{
+	position: absolute;
+	padding: 3em;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	text-align: center;
+	display: none;
+}
+
 .status-container{
 	padding: 2em;
 	border-radius: 1em;

@@ -32,13 +32,16 @@ declare class Tiper {
     private repeatAmount;
     private repeatAction;
     private repeatValue;
+    private mandatoryStop;
     private typingListener;
     constructor(container: Element, options?: tiperOptions);
     private throwError;
     private setRepeatSettings;
-    private trim;
+    private setMandatoryStop;
     private setCharsToDelete;
     private setRepeatValue;
+    private getWords;
+    private getAverageWordLength;
     private getTypingSpeed;
     private getCaretCharacter;
     private generateArrayWithSameValues;
@@ -49,6 +52,7 @@ declare class Tiper {
     private updateTypos;
     private setCurrentText;
     private setCurrentTextElement;
+    private setCurrentIndex;
     private getCurrentText;
     private getTextByRange;
     private getCaretLength;
@@ -57,9 +61,11 @@ declare class Tiper {
     private setFinishedTyping;
     private resetFinishedTyping;
     private updateElementText;
-    stopTyping: () => Promise<void>;
-    pauseTyping: (ms?: number) => Promise<void>;
-    resumeTyping: (reverse?: boolean, reset?: boolean) => void;
+    stopTyping: (mandatory?: boolean) => Promise<void>;
+    pause: (ms?: number, mandatoryStop?: boolean) => Promise<void>;
+    pauseTyping: () => Promise<void>;
+    resume: (reverse?: boolean, reset?: boolean, mandatoryStop?: boolean, setMandatoryStop?: boolean) => void;
+    resumeTyping: () => void;
     private delay;
     private applyVariation;
     private getCharAt;
@@ -68,16 +74,18 @@ declare class Tiper {
     private fixTypoAtIndex;
     private applyAndCorrectTypo;
     private insertCurrentChar;
+    private setCaretElement;
     private activateCaret;
     private deactivateCaret;
     private createSpan;
-    private appendElementToContainer;
+    private removeAllElements;
+    private insertElementInContainer;
     private initializeTextElement;
     private initializeCaret;
     private initializeGlitchEffect;
     private initializeTypingInterval;
     private setElementText;
-    private getElementText;
+    getElementText: () => any;
     private resetElementText;
     private getRandomGlitchChar;
     private generateGlitchText;
@@ -93,5 +101,6 @@ declare class Tiper {
     setAccuracy: (accuracy: number) => void;
     destroy: () => Promise<boolean>;
     isFinished: () => boolean;
+    resetText: () => void;
 }
 export default Tiper;

@@ -50,7 +50,7 @@ class Tiper {
 
 	private typingInterval: number;
 	private glitchInterval: number;
-	private currentTextElement: Element;
+	private currentTextElement: any;
 	private currentTypos: string;
 	private currentText: string;
 	private currentIndex: number = 0;
@@ -59,6 +59,8 @@ class Tiper {
 	private repeatAmount: number = 0;
 	private repeatAction: Function;
 	private repeatValue: Function;
+
+	private mandatoryStop: boolean = false;
 
 	private typingListener = {
 		finishedTyping: false,
@@ -80,7 +82,7 @@ class Tiper {
 		if (this.container === null)
 			this.throwError("Invalid container element.");
 		if (options) this.options = { ...this.options, ...options };
-		this.options.text = this.trim(this.options.text);
+		this.options.text = Utils.trim(this.options.text);
 		this.setCurrentText(this.options.text);
 		this.initializeCaret();
 	}
@@ -99,8 +101,8 @@ class Tiper {
 		if (this.repeatAmount) this.options.accuracy = 1;
 	};
 
-	private trim = (str: string) => {
-		return str.trim();
+	private setMandatoryStop = (mandatoryStop: boolean) => {
+		this.mandatoryStop = mandatoryStop;
 	};
 
 	private setCharsToDelete = (charsToDelete: number) => {
@@ -109,7 +111,7 @@ class Tiper {
 			charsToDelete <= 0
 		) {
 			this.setFinishedTyping(true);
-			this.stopTyping();
+			this.stopTyping(false);
 		}
 		this.charsToDelete = charsToDelete;
 	};
@@ -118,11 +120,33 @@ class Tiper {
 		this.repeatValue = getValue;
 	};
 
-	private getTypingSpeed = () => {
-		let ms = Math.floor(
-			this.currentText.length / (this.options.wordsPerMinute * 4.7) + 30
+	private getWords = () => {
+		let words = this.getCurrentText().match(/\w+/g);
+		return words;
+	};
+
+	private getAverageWordLength = () => {
+		let wordLengths: Array<number> = [];
+		let words = this.getWords();
+		for (let i = 0; i < words.length; i++) {
+			let word = words[i];
+			wordLengths.push(word.length);
+		}
+
+		let sum = wordLengths.reduce(
+			(previous, current) => (current += previous)
 		);
-		return ms;
+		let avg = sum / wordLengths.length;
+		return avg;
+	};
+
+	private getTypingSpeed = () => {
+		let avg = this.getAverageWordLength();
+		let ms = Math.abs(Math.floor(
+			((60 / this.options.wordsPerMinute) * (1 / avg) * 1000) / 4
+		) - 20);
+		let normalized = ms < 10 ? 10 : ms;
+		return normalized;
 	};
 
 	private getCaretCharacter = () => {
@@ -178,12 +202,16 @@ class Tiper {
 
 	private setCurrentText = (text: string) => {
 		this.currentText = text;
-		this.currentIndex = 0;
+		this.setCurrentIndex(0);
 		this.updateTypos();
 	};
 
-	private setCurrentTextElement = (currentTextElement: Element) => {
+	private setCurrentTextElement = (currentTextElement: any) => {
 		this.currentTextElement = currentTextElement;
+	};
+
+	private setCurrentIndex = (index: number) => {
+		this.currentIndex = index;
 	};
 
 	private getCurrentText = () => {
@@ -206,12 +234,12 @@ class Tiper {
 	};
 
 	private sourceTextIsTargetLength = () => {
+		if (!this.currentTextElement) return;
 		let caretLength = this.getCaretLength();
 		let textContentLength =
 			this.currentTextElement.textContent.length - caretLength;
 		let currentTextLength = this.currentText.length - 1;
-
-		return textContentLength == currentTextLength;
+		return textContentLength >= currentTextLength;
 	};
 
 	private observeTyping = () => {
@@ -239,22 +267,39 @@ class Tiper {
 		this.setElementText(text);
 	};
 
-	public stopTyping = async () => {
+	public stopTyping = async (mandatory: boolean = true) => {
+		if (!this.mandatoryStop) this.setMandatoryStop(mandatory);
 		this.activateCaret();
 		this.setFinishedTyping(true);
 		await clearIntervalAsync(this.typingInterval);
 	};
 
-	public pauseTyping = async (ms?: number) => {
-		let timeOut = ms !== undefined ? ms : this.options.pauseTimeout;
-		await this.stopTyping();
+	public pause = async (ms?: number, mandatoryStop: boolean = false) => {
+		let timeOut = typeof ms === "number" ? ms : this.options.pauseTimeout;
+		await this.stopTyping(mandatoryStop);
 		await this.delay(timeOut);
 	};
 
-	public resumeTyping = (reverse?: boolean, reset?: boolean) => {
+	public pauseTyping = () => {
+		return this.pause(null, true);
+	};
+
+	public resume = (
+		reverse?: boolean,
+		reset?: boolean,
+		mandatoryStop?: boolean,
+		setMandatoryStop?: boolean
+	) => {
+		if (setMandatoryStop) this.setMandatoryStop(mandatoryStop);
+		if (this.mandatoryStop) return;
+		this.setMandatoryStop(mandatoryStop);
 		if (reset) this.resetFinishedTyping();
 		this.initializeTypingInterval(reverse);
 		this.deactivateCaret();
+	};
+
+	public resumeTyping = () => {
+		return this.resume(false, true, false, true);
 	};
 
 	private delay = (ms: number) => {
@@ -268,7 +313,7 @@ class Tiper {
 			Math.floor(
 				this.options.hesitation *
 					Math.random() *
-					Utils.getRandomArbitrary(100, 500)
+					Utils.getRandomArbitrary(20, 300)
 			)
 		);
 		await this.delay(timeout);
@@ -315,11 +360,12 @@ class Tiper {
 		await this.delay(thinkingTime);
 
 		this.fixTypoAtIndex(this.currentIndex + spaces);
-		this.resumeTyping(false, true);
+		this.resume(false, true);
 	};
 
 	private insertCurrentChar = async (reverse?: boolean) => {
-		if (!this.typingListener.isFinishedTyping) {
+		if (!this.currentTextElement) this.initializeTextElement();
+		if (!this.typingListener.isFinishedTyping && !this.mandatoryStop) {
 			let currentChar = this.getCharAt(this.currentIndex);
 			let nextChar = this.getCharAt(this.currentIndex + 1);
 			let shouldPause = this.getShouldPause(currentChar, nextChar);
@@ -345,17 +391,21 @@ class Tiper {
 				this.setFinishedTyping(true);
 				await this.stopTyping();
 			} else {
-				this.currentIndex = this.currentIndex + (reverse ? -1 : 1);
+				this.setCurrentIndex(this.currentIndex + (reverse ? -1 : 1));
 
 				if (reverse) this.setCharsToDelete(this.charsToDelete - 1);
 				if (shouldPause && (reverse ? this.charsToDelete > 0 : true)) {
-					await this.pauseTyping();
-					this.resumeTyping(reverse, true);
+					await this.pause();
+					this.resume(reverse, true, false);
 				}
 			}
 		} else {
-			await this.stopTyping();
+			await this.stopTyping(true);
 		}
+	};
+
+	private setCaretElement = (caretElement: any) => {
+		this.caretElement = caretElement;
 	};
 
 	private activateCaret = () => {
@@ -372,13 +422,26 @@ class Tiper {
 		return el;
 	};
 
-	private appendElementToContainer = (element: Element) => {
-		this.container.appendChild(element);
+	private removeAllElements = (element: Element) => {
+		let allElements = document.getElementsByClassName(element.className);
+		for (let i = 0; i < allElements.length; i++) {
+			let el = allElements[i];
+			el.remove();
+		}
+	};
+
+	private insertElementInContainer = (
+		element: Element,
+		prepend?: boolean
+	) => {
+		this.removeAllElements(element);
+		let action = prepend ? "prepend" : "appendChild";
+		this.container[action](element);
 	};
 
 	private initializeTextElement = () => {
 		let textElement = this.createSpan("tiper-js-text");
-		this.appendElementToContainer(textElement);
+		this.insertElementInContainer(textElement, true);
 		this.setCurrentTextElement(textElement);
 	};
 
@@ -387,8 +450,8 @@ class Tiper {
 			if (this.caretElement) this.caretElement.remove();
 			let caret = this.createSpan("tiper-js-caret");
 			caret.innerText = this.getCaretCharacter();
-			this.appendElementToContainer(caret);
-			this.caretElement = caret;
+			this.insertElementInContainer(caret);
+			this.setCaretElement(caret);
 			this.activateCaret();
 		}
 	};
@@ -415,12 +478,17 @@ class Tiper {
 		this.currentTextElement.textContent = text;
 	};
 
-	private getElementText = () => {
-		return this.currentTextElement.textContent;
+	public getElementText = () => {
+		if (this.currentTextElement) return this.currentTextElement.textContent;
+		return "";
 	};
 
 	private resetElementText = () => {
 		this.container.innerHTML = "";
+		this.setCurrentIndex(0);
+		this.setCurrentTextElement(false);
+		this.setFinishedTyping(false);
+		this.initializeCaret();
 	};
 
 	private getRandomGlitchChar = () => {
@@ -462,6 +530,7 @@ class Tiper {
 		this.initializeTextElement();
 		this.setCurrentText(currentText);
 		this.resetFinishedTyping();
+		this.setMandatoryStop(false);
 		this.initializeTypingInterval();
 		if (this.options.glitch) this.initializeGlitchEffect();
 		if (this.options.showCaret) this.initializeCaret();
@@ -476,7 +545,7 @@ class Tiper {
 	};
 
 	public back = async (chars: number = this.getElementText().length) => {
-		await this.stopTyping();
+		await this.stopTyping(false);
 		this.resetFinishedTyping();
 		this.setCharsToDelete(chars);
 		this.initializeTypingInterval(true);
@@ -537,7 +606,7 @@ class Tiper {
 	};
 
 	public destroy = async () => {
-		await this.stopTyping();
+		await this.stopTyping(true);
 		this.resetElementText();
 		return false;
 	};
@@ -545,6 +614,8 @@ class Tiper {
 	public isFinished = () => {
 		return this.sourceTextIsTargetLength();
 	};
+
+	public resetText = this.resetElementText;
 }
 
 export default Tiper;

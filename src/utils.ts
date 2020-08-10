@@ -14,6 +14,9 @@ const Utils = {
 		}
 		return arrCopy;
 	},
+	trim: (str: string) => {
+		return str.trim();
+	},
 };
 
 export = Utils;
