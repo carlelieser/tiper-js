@@ -143,7 +143,7 @@ class TiperPlayground {
 	private clearTiper = async () => {
 		if (this.tiperInstance){
 			await this.stopTiper();
-			 this.tiperInstance.resetText();
+			 this.tiperInstance.clearText();
 		}
 	};
 

@@ -615,7 +615,7 @@ class Tiper {
 		return this.sourceTextIsTargetLength();
 	};
 
-	public resetText = this.resetElementText;
+	public clearText = this.resetElementText;
 }
 
 export default Tiper;

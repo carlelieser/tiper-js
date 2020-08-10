@@ -101,6 +101,6 @@ declare class Tiper {
     setAccuracy: (accuracy: number) => void;
     destroy: () => Promise<boolean>;
     isFinished: () => boolean;
-    resetText: () => void;
+    clearText: () => void;
 }
 export default Tiper;
