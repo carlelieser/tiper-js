@@ -20,8 +20,8 @@
 		"popper.js": "^1.16.1",
 		"ts-loader": "^8.0.1",
 		"typescript": "^3.9.7",
-		"webpack": "^4.44.0",
-		"webpack-cli": "^3.3.12"
+		"webpack": "^5.75.0",
+		"webpack-cli": "^5.0.1"
 	},
 	"dependencies": {
 		"set-interval-async": "^1.0.33"
